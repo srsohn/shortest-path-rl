@@ -1,0 +1,17 @@
+git clone httpsL://github.com/deepmind/lab
+cd lab
+git checkout 7b851dcbf6171fa184bf8a25bf2c87fe6d3f5380
+git checkout -b modified_dmlab
+git apply ../third_party/dmlab/dmlab_min_goal_distance.patch
+yum -y install unzip java-1.8.0-openjdk libffi-devel gcc gcc-c++ \
+  java-1.8.0-openjdk-devel freeglut-devel python-devel python-imaging \
+  numpy python36-numpy python36-pillow python36-devel SDL2 SDL2-devel \
+  mesa-libOSMesa-devel zip
+yum install gettext
+# modify BUILD and WORKSPACE, put alwayslink=1 at 850 … 4 lines in lab
+bazel build -c opt //:deepmind_lab.so
+bazel build -c opt python/pip_package:build_pip_package
+./bazel-bin/python/pip_package/build_pip_package /tmp/dmlab_pkg
+pip install /tmp/dmlab_pkg/DeepMind_Lab-1.0-py3-none-any.whl --force-reinstall
+cd ..
+pip install -e .
